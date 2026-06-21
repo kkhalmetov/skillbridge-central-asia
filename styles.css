@@ -1640,9 +1640,13 @@ h3 {
 }
 
 .card-description {
+  display: -webkit-box;
   margin-top: 0;
   margin-bottom: 16px;
   color: var(--text-soft);
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
   overflow-wrap: anywhere;
   word-break: break-word;
 }

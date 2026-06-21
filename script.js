@@ -582,7 +582,6 @@ function renderOpportunityDetail() {
         ` : ""}
         <div class="opportunity-detail-copy">
           <h1 class="page-title">${escapeHtml(titleText)}</h1>
-          ${item.description ? `<p>${escapeHtml(item.description)}</p>` : ""}
           <div class="detail-hero-actions">
             ${safeUrl(metadata.applyUrl) ? `<a class="button primary" href="${escapeAttribute(safeUrl(metadata.applyUrl))}" ${safeUrl(metadata.applyUrl).startsWith("mailto:") ? "" : 'target="_blank" rel="noopener"'}>Apply Now</a>` : ""}
             <button class="button secondary share-button" type="button" data-share-opportunity>Share</button>
