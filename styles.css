@@ -1693,9 +1693,8 @@ h3 {
 }
 
 .card .tag-list {
-  min-height: 60px;
   align-content: flex-start;
-  margin: 0 0 18px;
+  margin: 0 0 16px;
 }
 
 .tag {
@@ -1733,7 +1732,7 @@ h3 {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-top: auto;
+  margin-top: 6px;
   color: var(--primary);
   font-size: 0.92rem;
   font-weight: 700;
