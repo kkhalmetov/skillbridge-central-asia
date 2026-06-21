@@ -38,7 +38,7 @@ const tagLabels = {
 
 let opportunities = [];
 const opportunitiesEndpoint = "/api/opportunities";
-const opportunitiesCacheKey = "skillbridge-opportunities-cache-v3";
+const opportunitiesCacheKey = "skillbridge-opportunities-cache-v2";
 const opportunitiesCacheTtl = 5 * 60 * 1000;
 
 const catalogGrid = document.querySelector("#catalogGrid");
@@ -447,11 +447,10 @@ function opportunityCard(item, variant = "") {
     .filter(Boolean)
     .map((value) => `<span>${escapeHtml(value)}</span>`)
     .join("");
-  const cardImage = item.imageThumb || item.imageSrc;
 
   return `
     <a class="card quick-card opportunity-card ${variant}" href="${opportunityUrl(item)}">
-      ${cardImage ? `<img class="card-image" src="${escapeAttribute(safeUrl(cardImage))}" alt="${escapeAttribute(item.title || "Opportunity image")}" width="640" height="360" loading="lazy" decoding="async" />` : ""}
+      ${item.imageSrc ? `<img class="card-image" src="${escapeAttribute(safeUrl(item.imageSrc))}" alt="${escapeAttribute(item.title || "Opportunity image")}" loading="lazy" />` : ""}
       ${item.category ? `<div class="card-top">
         <span class="type-badge">${escapeHtml(categoryLabels[item.category] || item.category)}</span>
       </div>` : ""}
@@ -637,7 +636,7 @@ function renderOpportunityDetail() {
       <section class="opportunity-detail-hero">
         ${item.imageSrc ? `
         <div class="opportunity-detail-media">
-          <img src="${escapeAttribute(safeUrl(item.imageSrc))}" alt="${escapeAttribute(item.title || "Opportunity image")}" width="1280" height="720" loading="eager" decoding="async" />
+          <img src="${escapeAttribute(safeUrl(item.imageSrc))}" alt="${escapeAttribute(item.title || "Opportunity image")}" />
         </div>
         ` : ""}
         <div class="opportunity-detail-copy">
