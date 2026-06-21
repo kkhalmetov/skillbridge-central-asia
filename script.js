@@ -138,6 +138,16 @@ function absoluteUrl(value) {
   return `${siteUrl}/${url.replace(/^\/+/, "")}`;
 }
 
+function preloadImage(url) {
+  const imageUrl = safeUrl(url);
+  if (!imageUrl || [...document.querySelectorAll('link[rel="preload"][as="image"]')].some((link) => link.href === imageUrl)) return;
+  const link = document.createElement("link");
+  link.rel = "preload";
+  link.as = "image";
+  link.href = imageUrl;
+  document.head.appendChild(link);
+}
+
 function canUseApiEndpoint() {
   return location.protocol === "http:" || location.protocol === "https:";
 }
@@ -430,7 +440,7 @@ function sortedOpportunities(items) {
   });
 }
 
-function opportunityCard(item, variant = "") {
+function opportunityCard(item, variant = "", options = {}) {
   const daysLeft = daysUntilDeadline(item.deadline);
   const closingSoon = daysLeft >= 0 && daysLeft < 7;
   const deadlineText = item.deadline
@@ -450,7 +460,7 @@ function opportunityCard(item, variant = "") {
 
   return `
     <a class="card quick-card opportunity-card ${variant}" href="${opportunityUrl(item)}">
-      ${item.imageSrc ? `<img class="card-image" src="${escapeAttribute(safeUrl(item.imageSrc))}" alt="${escapeAttribute(item.title || "Opportunity image")}" loading="lazy" />` : ""}
+      ${item.imageSrc ? `<img class="card-image" src="${escapeAttribute(safeUrl(item.imageSrc))}" alt="${escapeAttribute(item.title || "Opportunity image")}" loading="${options.eagerImage ? "eager" : "lazy"}" ${options.eagerImage ? 'fetchpriority="high"' : ""} />` : ""}
       ${item.category ? `<div class="card-top">
         <span class="type-badge">${escapeHtml(categoryLabels[item.category] || item.category)}</span>
       </div>` : ""}
@@ -491,14 +501,16 @@ function renderCatalog() {
     return;
   }
 
-  catalogGrid.innerHTML = items.map((item) => opportunityCard(item)).join("");
+  preloadImage(items[0]?.imageSrc);
+  catalogGrid.innerHTML = items.map((item, index) => opportunityCard(item, "", { eagerImage: index === 0 })).join("");
 }
 
 function renderHomeSections() {
   renderHeroStats();
   if (!featuredGrid) return;
   const featured = sortedOpportunities(opportunities).slice(0, 3);
-  featuredGrid.innerHTML = featured.map((item) => opportunityCard(item, "featured-card")).join("");
+  preloadImage(featured[0]?.imageSrc);
+  featuredGrid.innerHTML = featured.map((item, index) => opportunityCard(item, "featured-card", { eagerImage: index === 0 })).join("");
 }
 
 function renderOpportunityDetail() {
