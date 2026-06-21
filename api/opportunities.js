@@ -82,6 +82,13 @@ function normalizeImage(value) {
   return asText(value);
 }
 
+function normalizeImageThumb(value) {
+  if (Array.isArray(value) && value[0]) {
+    return value[0].thumbnails?.large?.url || value[0].thumbnails?.full?.url || value[0].thumbnails?.small?.url || value[0].url || "";
+  }
+  return asText(value);
+}
+
 function normalizeDate(value) {
   const text = asText(value);
   if (/^\d{4}-\d{2}-\d{2}$/.test(text)) return text;
@@ -103,7 +110,9 @@ function normalizeRecord(record) {
   const addedDate = normalizeDate(pick(fields, ["addedDate", "added date", "Added date", "Added", "Created"])) || record.createdTime?.slice(0, 10) || deadline;
   const description = asText(pick(fields, ["description", "Description", "Short description", "Summary"]));
   const details = asText(pick(fields, ["details", "Details", "Full description", "Long description"])) || description;
-  const imageSrc = normalizeImage(pick(fields, ["image", "Image", "Photo", "Cover", "Picture"]));
+  const imageValue = pick(fields, ["image", "Image", "Photo", "Cover", "Picture"]);
+  const imageSrc = normalizeImage(imageValue);
+  const imageThumb = normalizeImageThumb(imageValue);
   const applyUrl = asText(pick(fields, ["link", "Apply URL", "Application link", "Link", "URL"]));
   const tags = normalizeTags(pick(fields, ["tags", "Tags", "Tag"]));
   const requirements = asText(pick(fields, ["requir", "Requir", "requirements", "Requirements", "Application requirements"]));
@@ -136,6 +145,7 @@ function normalizeRecord(record) {
     organizer,
     location,
     imageSrc,
+    imageThumb,
     description,
     details,
     tags,
