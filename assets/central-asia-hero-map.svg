@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760" role="img" aria-labelledby="title desc">
+  <title id="title">Central Asia opportunity map</title>
+  <desc id="desc">Minimal abstract Central Asia map illustration with connected opportunity points.</desc>
+  <defs>
+    <filter id="cardShadow" x="-12%" y="-12%" width="124%" height="124%">
+      <feDropShadow dx="0" dy="24" stdDeviation="28" flood-color="#18181b" flood-opacity="0.08"/>
+    </filter>
+    <filter id="landShadow" x="-18%" y="-18%" width="136%" height="136%">
+      <feDropShadow dx="0" dy="12" stdDeviation="10" flood-color="#18181b" flood-opacity="0.10"/>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="760" fill="#fafafa"/>
+
+  <g filter="url(#cardShadow)">
+    <rect x="68" y="112" width="1064" height="536" rx="12" fill="#ffffff" stroke="#dfe3e8" stroke-width="2"/>
+  </g>
+
+  <g fill="none" stroke="#dfe5ea" stroke-width="2" opacity="0.85">
+    <path d="M132 256 C238 220 320 268 412 260 C502 252 564 190 704 188 C848 186 968 244 1068 310"/>
+    <path d="M126 506 C236 466 314 560 438 550 C544 542 594 474 700 500 C802 528 878 558 974 530 C1050 506 1050 442 1100 404"/>
+    <path d="M966 306 C954 286 982 270 990 260"/>
+    <path d="M178 452 L220 376 L270 456"/>
+    <path d="M235 452 L298 334 L392 468"/>
+    <path d="M872 438 L928 326 L984 440"/>
+    <path d="M930 438 L1014 292 L1092 454"/>
+  </g>
+
+  <g fill="#7aa9b2" opacity="0.55">
+    <circle cx="160" cy="350" r="3"/>
+    <circle cx="180" cy="350" r="3"/>
+    <circle cx="200" cy="350" r="3"/>
+    <circle cx="220" cy="350" r="3"/>
+    <circle cx="160" cy="370" r="3"/>
+    <circle cx="180" cy="370" r="3"/>
+    <circle cx="200" cy="370" r="3"/>
+    <circle cx="220" cy="370" r="3"/>
+    <circle cx="858" cy="192" r="3"/>
+    <circle cx="878" cy="192" r="3"/>
+    <circle cx="898" cy="192" r="3"/>
+    <circle cx="918" cy="192" r="3"/>
+    <circle cx="858" cy="212" r="3"/>
+    <circle cx="878" cy="212" r="3"/>
+    <circle cx="898" cy="212" r="3"/>
+    <circle cx="918" cy="212" r="3"/>
+  </g>
+
+  <g filter="url(#landShadow)" stroke="#213547" stroke-width="5" stroke-linejoin="round">
+    <path d="M188 346 C154 300 178 258 236 226 C286 198 322 190 366 212 C414 236 468 216 508 244 C556 278 630 270 668 314 C704 356 686 408 628 420 C562 436 512 404 464 424 C398 452 318 442 254 414 C222 400 202 378 188 346Z" fill="#f7f8f4"/>
+    <path d="M278 442 C222 394 252 344 316 330 C376 318 418 360 478 368 C542 376 602 416 622 466 C640 512 600 548 532 546 C466 544 432 508 360 496 C324 490 300 468 278 442Z" fill="#eef6f3"/>
+    <path d="M652 330 C630 284 666 262 736 266 C788 270 820 310 872 318 C924 328 972 370 954 414 C936 460 866 448 814 424 C762 400 682 402 652 330Z" fill="#f4f1e9"/>
+    <path d="M608 440 C574 392 610 352 668 356 C722 360 760 412 812 410 C866 408 924 442 916 492 C908 544 828 544 770 516 C712 488 642 488 608 440Z" fill="#eef2f4"/>
+    <path d="M744 478 C792 438 858 432 916 452 C974 472 1010 520 978 558 C942 602 870 580 806 552 C752 528 700 514 744 478Z" fill="#eef4f5"/>
+  </g>
+
+  <g fill="none" stroke="#ffffff" stroke-width="3" opacity="0.9">
+    <path d="M340 424 C454 470 552 470 664 430"/>
+    <path d="M534 340 C640 298 760 310 858 380"/>
+    <path d="M656 480 C736 504 800 506 874 482"/>
+  </g>
+
+  <g>
+    <circle cx="354" cy="422" r="17" fill="#ffffff"/>
+    <circle cx="354" cy="422" r="8" fill="#0f766e"/>
+    <circle cx="532" cy="326" r="17" fill="#ffffff"/>
+    <circle cx="532" cy="326" r="8" fill="#0f766e"/>
+    <circle cx="674" cy="428" r="17" fill="#ffffff"/>
+    <circle cx="674" cy="428" r="8" fill="#0f766e"/>
+    <circle cx="836" cy="326" r="17" fill="#ffffff"/>
+    <circle cx="836" cy="326" r="8" fill="#0f766e"/>
+    <circle cx="856" cy="452" r="17" fill="#ffffff"/>
+    <circle cx="856" cy="452" r="8" fill="#0f766e"/>
+  </g>
+</svg>

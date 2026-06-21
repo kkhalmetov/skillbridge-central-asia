@@ -1,0 +1,19 @@
+{
+  "name": "SkillBridge Central Asia",
+  "short_name": "SkillBridge CA",
+  "description": "Youth opportunities platform for internships, grants, scholarships, volunteering and events across Central Asia.",
+  "start_url": "/",
+  "scope": "/",
+  "id": "/",
+  "display": "standalone",
+  "background_color": "#fafafa",
+  "theme_color": "#18181b",
+  "icons": [
+    {
+      "src": "assets/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

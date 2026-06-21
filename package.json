@@ -1,0 +1,7 @@
+{
+  "scripts": {
+    "dev": "node dev-server.js",
+    "check": "node --check script.js && node --check api/opportunities.js && node --check dev-server.js"
+  },
+  "devDependencies": {}
+}
