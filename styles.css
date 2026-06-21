@@ -45,8 +45,13 @@ body {
   overflow-wrap: anywhere;
 }
 
-svg {
+svg,
+img {
   display: block;
+}
+
+img {
+  max-width: 100%;
 }
 
 .top-anchor {
@@ -564,7 +569,7 @@ h3 {
 }
 
 .section-link {
-  min-height: 40px;
+  min-height: 44px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -2259,26 +2264,6 @@ textarea {
   display: grid;
   align-content: start;
   gap: 9px;
-}
-
-.footer-brand-block {
-  order: 1;
-}
-
-.footer-links {
-  order: 2;
-}
-
-.footer-contact {
-  order: 3;
-}
-
-.footer-sdg {
-  order: 5;
-}
-
-.footer-social {
-  order: 4;
 }
 
 .footer-links span,
