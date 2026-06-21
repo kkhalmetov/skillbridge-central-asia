@@ -180,6 +180,9 @@ async function loadOpportunities() {
     if (Array.isArray(data.opportunities)) {
       opportunities = data.opportunities;
       cacheOpportunities(opportunities);
+      renderHomeSections();
+      renderCatalog();
+      renderOpportunityDetail();
     }
   } catch (error) {
     console.warn("Could not load Airtable opportunities.", error);
