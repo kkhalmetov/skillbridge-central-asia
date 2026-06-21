@@ -1630,14 +1630,16 @@ h3 {
   --sdg-color: var(--primary);
   min-width: 0;
   display: grid;
+  grid-template-columns: 88px minmax(0, 1fr);
+  align-items: start;
   gap: 16px;
   padding: 18px;
   color: var(--text);
-  background: var(--surface-soft);
+  background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   text-decoration: none;
-  transition: background var(--transition), border-color var(--transition), box-shadow var(--transition), transform var(--transition);
+  transition: background var(--transition), border-color var(--transition), box-shadow var(--transition);
 }
 
 .sdg-card:hover {
@@ -1651,22 +1653,35 @@ h3 {
   outline-offset: 4px;
 }
 
-.sdg-icon {
-  width: 96px;
-  height: 96px;
-  object-fit: cover;
+.sdg-icon-frame {
+  width: 88px;
+  height: 88px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface-soft);
+  border: 1px solid var(--border);
   border-radius: var(--radius);
+}
+
+.sdg-icon {
+  width: 72px;
+  height: 72px;
+  object-fit: cover;
+  border-radius: calc(var(--radius) - 2px);
 }
 
 .sdg-card h3 {
   font-size: 1.18rem;
   line-height: 1.08;
+  text-decoration: none;
 }
 
 .sdg-card p {
   margin: 8px 0 0;
   color: var(--text-soft);
   line-height: 1.55;
+  text-decoration: none;
 }
 
 .sdg-goal-4 {
