@@ -244,7 +244,7 @@ function renderFilterOptions() {
 }
 
 function opportunityUrl(item) {
-  return `opportunity.html?id=${encodeURIComponent(item.id)}`;
+  return `/opportunity?id=${encodeURIComponent(item.id)}`;
 }
 
 function catalogFilterUrl(group, value) {
@@ -253,7 +253,15 @@ function catalogFilterUrl(group, value) {
     regions: "region",
     tags: "tag",
   };
-  return `catalog.html?${paramByGroup[group]}=${encodeURIComponent(value)}`;
+  return `/catalog?${paramByGroup[group]}=${encodeURIComponent(value)}`;
+}
+
+function normalizeNavigationPath(value) {
+  const url = new URL(value || "/", location.origin);
+  let pathname = url.pathname.replace(/\/$/, "") || "/";
+  pathname = pathname.replace(/\.html$/, "");
+  if (pathname === "/index") return "/";
+  return pathname;
 }
 
 function setFiltersOpen(isOpen) {
@@ -263,10 +271,10 @@ function setFiltersOpen(isOpen) {
 }
 
 function updateActiveNav() {
-  const currentPage = location.pathname.split("/").pop() || "index.html";
+  const currentPage = normalizeNavigationPath(location.href);
   document.querySelectorAll(".main-nav a").forEach((link) => {
-    const linkPage = link.getAttribute("href").split("#")[0] || "index.html";
-    const isActive = linkPage === currentPage || (currentPage === "" && linkPage === "index.html");
+    const linkPage = normalizeNavigationPath(link.getAttribute("href"));
+    const isActive = linkPage === currentPage;
     link.classList.toggle("active", isActive);
     if (isActive) {
       link.setAttribute("aria-current", "page");
@@ -276,7 +284,7 @@ function updateActiveNav() {
   });
 
   document.querySelectorAll(".header-cta").forEach((link) => {
-    const linkPage = link.getAttribute("href").split("#")[0];
+    const linkPage = normalizeNavigationPath(link.getAttribute("href"));
     if (linkPage === currentPage) {
       link.setAttribute("aria-current", "page");
     } else {
@@ -454,7 +462,7 @@ function renderOpportunityDetail() {
         <p class="eyebrow">Opportunity</p>
         <h1 class="page-title">Opportunity not found</h1>
         <p>This opportunity may have been removed or the link is incorrect.</p>
-        <a class="button primary" href="catalog.html">Back to catalog</a>
+        <a class="button primary" href="/catalog">Back to catalog</a>
       </div>
     `;
     return;
@@ -467,12 +475,12 @@ function renderOpportunityDetail() {
   setMetaContent('meta[name="description"]', detailDescription);
   setMetaContent('meta[property="og:title"]', detailTitle);
   setMetaContent('meta[property="og:description"]', detailDescription);
-  setMetaContent('meta[property="og:url"]', `${siteUrl}/${opportunityUrl(item)}`);
+  setMetaContent('meta[property="og:url"]', `${siteUrl}${opportunityUrl(item)}`);
   if (item.imageSrc) setMetaContent('meta[property="og:image"]', absoluteUrl(item.imageSrc));
   setMetaContent('meta[name="twitter:title"]', detailTitle);
   setMetaContent('meta[name="twitter:description"]', detailDescription);
   if (item.imageSrc) setMetaContent('meta[name="twitter:image"]', absoluteUrl(item.imageSrc));
-  setCanonical(`${siteUrl}/${opportunityUrl(item)}`);
+  setCanonical(`${siteUrl}${opportunityUrl(item)}`);
 
   const metadata = detailMetadata(item);
   const daysLeft = daysUntilDeadline(item.deadline);
@@ -558,9 +566,9 @@ function renderOpportunityDetail() {
 
   detailRoot.innerHTML = `
     <nav class="breadcrumbs" aria-label="Breadcrumb">
-      <a href="index.html">Home</a>
+      <a href="/">Home</a>
       <span aria-hidden="true">&rarr;</span>
-      <a href="catalog.html">Opportunities</a>
+      <a href="/catalog">Opportunities</a>
       <span aria-hidden="true">&rarr;</span>
       <span>${escapeHtml(titleText)}</span>
     </nav>
@@ -612,7 +620,7 @@ function renderOpportunityDetail() {
             <p class="eyebrow">Related opportunities</p>
             <h2>Keep exploring</h2>
           </div>
-          <a class="section-link" href="catalog.html">View all</a>
+          <a class="section-link" href="/catalog">View all</a>
         </div>
         <div class="catalog-grid related-grid">${relatedCards}</div>
       </section>

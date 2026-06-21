@@ -54,7 +54,11 @@ function createApiResponse(response) {
 function safeFilePath(urlPath) {
   const cleanPath = decodeURIComponent(urlPath.split("?")[0]);
   const requested = cleanPath === "/" ? "/index.html" : cleanPath;
-  const filePath = path.normalize(path.join(root, requested));
+  let filePath = path.normalize(path.join(root, requested));
+  if (!path.extname(filePath)) {
+    const htmlPath = `${filePath}.html`;
+    if (fs.existsSync(htmlPath)) filePath = htmlPath;
+  }
   return filePath.startsWith(root) ? filePath : "";
 }
 
