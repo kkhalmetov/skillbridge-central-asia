@@ -2110,14 +2110,15 @@ textarea {
 .footer-main {
   max-width: var(--container);
   display: grid;
-  grid-template-columns: minmax(220px, 1.25fr) repeat(3, minmax(150px, 1fr));
+  grid-template-columns: minmax(220px, 1.25fr) repeat(4, minmax(130px, 1fr));
   gap: 28px;
   margin: 0 auto;
 }
 
 .footer-brand-block p,
 .footer-contact a,
-.footer-links a {
+.footer-links a,
+.footer-sdg p {
   color: var(--text-soft);
 }
 
@@ -2129,6 +2130,7 @@ textarea {
 
 .footer-links,
 .footer-contact,
+.footer-sdg,
 .footer-social {
   display: grid;
   align-content: start;
@@ -2137,6 +2139,7 @@ textarea {
 
 .footer-links span,
 .footer-contact span,
+.footer-sdg span,
 .footer-social span {
   color: var(--text);
   font-size: 0.92rem;
@@ -2154,6 +2157,27 @@ textarea {
 .footer-links a:hover,
 .footer-contact a:hover {
   color: var(--primary);
+}
+
+.footer-sdg-lockup {
+  max-width: 260px;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+
+.footer-sdg-lockup img {
+  width: 42px;
+  height: 42px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+}
+
+.footer-sdg p {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 700;
+  line-height: 1.45;
 }
 
 .social-links {
