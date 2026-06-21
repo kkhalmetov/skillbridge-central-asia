@@ -38,7 +38,7 @@ const tagLabels = {
 
 let opportunities = [];
 const opportunitiesEndpoint = "/api/opportunities";
-const opportunitiesCacheKey = "skillbridge-opportunities-cache-v1";
+const opportunitiesCacheKey = "skillbridge-opportunities-cache-v2";
 const opportunitiesCacheTtl = 5 * 60 * 1000;
 
 const catalogGrid = document.querySelector("#catalogGrid");
@@ -194,6 +194,7 @@ function detailMetadata(item) {
     format: item.format || "",
     duration: item.duration || "",
     cost: item.cost || "",
+    requirements: item.requirements || "",
     applyUrl: item.applyUrl,
   };
 }
@@ -520,6 +521,15 @@ function renderOpportunityDetail() {
           </section>
     `
     : "";
+  const requirementsSection = metadata.requirements
+    ? `
+          <section class="detail-section-card">
+            <p class="eyebrow">Requirements</p>
+            <h2>Application requirements</h2>
+            <p>${escapeHtml(metadata.requirements)}</p>
+          </section>
+    `
+    : "";
   const timelineItems = [
     ["Applications open", metadata.applicationOpen, ""],
     ["Application deadline", item.deadline, closingSoon ? "date-emphasis" : ""],
@@ -592,6 +602,8 @@ function renderOpportunityDetail() {
       <div class="opportunity-detail-layout">
         <div class="opportunity-detail-main">
           ${overviewSection}
+
+          ${requirementsSection}
 
           ${participationSection}
 

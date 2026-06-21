@@ -106,6 +106,7 @@ function normalizeRecord(record) {
   const imageSrc = normalizeImage(pick(fields, ["image", "Image", "Photo", "Cover", "Picture"]));
   const applyUrl = asText(pick(fields, ["link", "Apply URL", "Application link", "Link", "URL"]));
   const tags = normalizeTags(pick(fields, ["tags", "Tags", "Tag"]));
+  const requirements = asText(pick(fields, ["requir", "Requir", "requirements", "Requirements", "Application requirements"]));
   const hasContent = [
     title,
     organizer,
@@ -116,6 +117,7 @@ function normalizeRecord(record) {
     tags.join(""),
     applyUrl,
     imageSrc,
+    requirements,
     normalizeDate(pick(fields, ["ap", "AP", "applicationOpen", "Applications open", "Application open"])),
     normalizeDate(pick(fields, ["pa", "PA", "programStart", "Program start", "Start date"])),
   ].some(Boolean);
@@ -138,6 +140,7 @@ function normalizeRecord(record) {
     details,
     tags,
     applyUrl,
+    requirements,
     applicationOpen: normalizeDate(pick(fields, ["ap", "AP", "applicationOpen", "Applications open", "Application open"])),
     programStart: normalizeDate(pick(fields, ["pa", "PA", "programStart", "Program start", "Start date"])),
     eligibility: asText(pick(fields, ["eligibility", "Eligibility", "Who can apply"])),
