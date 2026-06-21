@@ -2266,6 +2266,26 @@ textarea {
   gap: 9px;
 }
 
+.footer-brand-block {
+  order: 1;
+}
+
+.footer-links {
+  order: 2;
+}
+
+.footer-contact {
+  order: 3;
+}
+
+.footer-sdg {
+  order: 4;
+}
+
+.footer-social {
+  order: 5;
+}
+
 .footer-links span,
 .footer-contact span,
 .footer-sdg span,
