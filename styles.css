@@ -1483,8 +1483,7 @@ h3 {
   stroke-width: 1.8;
 }
 
-.audience-card h3,
-.team-card h3 {
+.audience-card h3 {
   margin-top: 0;
 }
 
@@ -1495,13 +1494,18 @@ h3 {
   padding: 24px;
 }
 
+.team-card h3 {
+  margin: 0 0 12px;
+  line-height: 1.08;
+}
+
 .team-card span {
   width: fit-content;
   max-width: 100%;
   min-height: 28px;
   display: inline-flex;
   align-items: center;
-  margin: 2px 0 14px;
+  margin: 0 0 18px;
   padding: 0 9px;
   color: var(--text-soft);
   background: var(--surface-soft);
@@ -1510,6 +1514,11 @@ h3 {
   font-size: 0.84rem;
   font-weight: 700;
   line-height: 1.25;
+}
+
+.team-card p {
+  margin: 0;
+  line-height: 1.55;
 }
 
 .about-vision-panel,
