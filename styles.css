@@ -1923,6 +1923,7 @@ h3 {
   display: grid;
   gap: 12px;
   max-width: 760px;
+  margin-top: 18px;
   color: var(--text-soft);
   line-height: 1.7;
   overflow-wrap: anywhere;
