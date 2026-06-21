@@ -112,6 +112,16 @@ function escapeAttribute(value) {
   return escapeHtml(value).replace(/`/g, "&#96;");
 }
 
+function formatLongText(value) {
+  return String(value || "")
+    .trim()
+    .split(/\n{2,}/)
+    .map((paragraph) => paragraph.trim())
+    .filter(Boolean)
+    .map((paragraph) => `<p>${escapeHtml(paragraph).replace(/\n/g, "<br>")}</p>`)
+    .join("");
+}
+
 function safeUrl(value) {
   const url = String(value || "").trim();
   if (!url) return "";
@@ -529,7 +539,7 @@ function renderOpportunityDetail() {
           <section class="detail-section-card">
             <p class="eyebrow">Requirements</p>
             <h2>Application requirements</h2>
-            <p>${escapeHtml(metadata.requirements)}</p>
+            <div class="long-text">${formatLongText(metadata.requirements)}</div>
           </section>
     `
     : "";
@@ -559,7 +569,7 @@ function renderOpportunityDetail() {
           <section class="detail-section-card">
             <p class="eyebrow">Overview</p>
             <h2>About this opportunity</h2>
-            <p>${escapeHtml(item.details || item.description)}</p>
+            <div class="long-text">${formatLongText(item.details || item.description)}</div>
           </section>
     `
     : "";

@@ -1919,6 +1919,20 @@ h3 {
   word-break: break-word;
 }
 
+.long-text {
+  display: grid;
+  gap: 12px;
+  max-width: 760px;
+  color: var(--text-soft);
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.long-text p {
+  margin: 0;
+}
+
 .detail-check-list {
   display: grid;
   gap: 10px;
