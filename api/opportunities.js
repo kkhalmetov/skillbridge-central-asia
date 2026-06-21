@@ -116,8 +116,8 @@ function normalizeRecord(record) {
     tags.join(""),
     applyUrl,
     imageSrc,
-    normalizeDate(pick(fields, ["AP", "applicationOpen", "Applications open", "Application open"])),
-    normalizeDate(pick(fields, ["PA", "programStart", "Program start", "Start date"])),
+    normalizeDate(pick(fields, ["ap", "AP", "applicationOpen", "Applications open", "Application open"])),
+    normalizeDate(pick(fields, ["pa", "PA", "programStart", "Program start", "Start date"])),
   ].some(Boolean);
 
   if (!hasContent) {
@@ -138,8 +138,8 @@ function normalizeRecord(record) {
     details,
     tags,
     applyUrl,
-    applicationOpen: normalizeDate(pick(fields, ["AP", "applicationOpen", "Applications open", "Application open"])),
-    programStart: normalizeDate(pick(fields, ["PA", "programStart", "Program start", "Start date"])),
+    applicationOpen: normalizeDate(pick(fields, ["ap", "AP", "applicationOpen", "Applications open", "Application open"])),
+    programStart: normalizeDate(pick(fields, ["pa", "PA", "programStart", "Program start", "Start date"])),
     eligibility: asText(pick(fields, ["eligibility", "Eligibility", "Who can apply"])),
     format: asText(pick(fields, ["format", "Format"])),
     duration: asText(pick(fields, ["duration", "Duration"])),
@@ -208,7 +208,7 @@ module.exports = async function handler(request, response) {
       .map(normalizeRecord)
       .filter(Boolean);
 
-    response.setHeader("Cache-Control", "s-maxage=60, stale-while-revalidate=300");
+    response.setHeader("Cache-Control", "no-store");
     response.status(200).json({ opportunities });
   } catch (error) {
     response.status(500).json({ error: error.message });
