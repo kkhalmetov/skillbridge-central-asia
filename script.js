@@ -43,6 +43,7 @@ const opportunitiesCacheTtl = 5 * 60 * 1000;
 
 const catalogGrid = document.querySelector("#catalogGrid");
 const featuredGrid = document.querySelector("#featuredGrid");
+const heroStats = document.querySelector("[data-hero-stats]");
 const catalogSearch = document.querySelector("#catalogSearch");
 const filterOptionGroups = document.querySelectorAll("[data-filter-options]");
 const clearFilters = document.querySelector("#clearFilters");
@@ -214,6 +215,40 @@ function detailMetadata(item) {
 
 function resultLabel(count) {
   return `${count} ${count === 1 ? "result" : "results"}`;
+}
+
+function formatMetricValue(value) {
+  if (value >= 1000) return `${Math.floor(value / 100) / 10}k+`;
+  return String(value);
+}
+
+function upcomingDeadlineCount(items) {
+  return items.filter((item) => {
+    const daysLeft = daysUntilDeadline(item.deadline);
+    return Number.isFinite(daysLeft) && daysLeft >= 0;
+  }).length;
+}
+
+function renderHeroStats() {
+  if (!heroStats) return;
+
+  const stats = [
+    ["Opportunities", opportunities.length],
+    ["Categories", new Set(opportunities.map((item) => item.category).filter(Boolean)).size],
+    ["Organizers", new Set(opportunities.map((item) => item.organizer).filter(Boolean)).size],
+    ["Upcoming deadlines", upcomingDeadlineCount(opportunities)],
+  ];
+
+  heroStats.innerHTML = stats
+    .map(
+      ([label, value]) => `
+        <div>
+          <dt>${escapeHtml(formatMetricValue(value))}</dt>
+          <dd>${escapeHtml(label)}</dd>
+        </div>
+      `,
+    )
+    .join("");
 }
 
 function activeFilterCount() {
@@ -460,6 +495,7 @@ function renderCatalog() {
 }
 
 function renderHomeSections() {
+  renderHeroStats();
   if (!featuredGrid) return;
   const featured = sortedOpportunities(opportunities).slice(0, 3);
   featuredGrid.innerHTML = featured.map((item) => opportunityCard(item, "featured-card")).join("");
