@@ -208,7 +208,7 @@ module.exports = async function handler(request, response) {
       .map(normalizeRecord)
       .filter(Boolean);
 
-    response.setHeader("Cache-Control", "no-store");
+    response.setHeader("Cache-Control", "s-maxage=30, stale-while-revalidate=300");
     response.status(200).json({ opportunities });
   } catch (error) {
     response.status(500).json({ error: error.message });

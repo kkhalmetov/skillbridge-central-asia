@@ -38,6 +38,8 @@ const tagLabels = {
 
 let opportunities = [];
 const opportunitiesEndpoint = "/api/opportunities";
+const opportunitiesCacheKey = "skillbridge-opportunities-cache-v1";
+const opportunitiesCacheTtl = 5 * 60 * 1000;
 
 const catalogGrid = document.querySelector("#catalogGrid");
 const featuredGrid = document.querySelector("#featuredGrid");
@@ -129,8 +131,45 @@ function canUseApiEndpoint() {
   return location.protocol === "http:" || location.protocol === "https:";
 }
 
+function pageNeedsOpportunities() {
+  return Boolean(catalogGrid || featuredGrid || detailRoot);
+}
+
+function readCachedOpportunities() {
+  try {
+    const cached = JSON.parse(localStorage.getItem(opportunitiesCacheKey) || "null");
+    if (!cached?.timestamp || !Array.isArray(cached.opportunities)) return [];
+    if (Date.now() - cached.timestamp > opportunitiesCacheTtl) return [];
+    return cached.opportunities;
+  } catch (error) {
+    return [];
+  }
+}
+
+function cacheOpportunities(items) {
+  try {
+    localStorage.setItem(
+      opportunitiesCacheKey,
+      JSON.stringify({
+        timestamp: Date.now(),
+        opportunities: items,
+      }),
+    );
+  } catch (error) {
+    // Storage can be unavailable in private browsing modes.
+  }
+}
+
 async function loadOpportunities() {
-  if (!canUseApiEndpoint()) return;
+  if (!canUseApiEndpoint() || !pageNeedsOpportunities()) return;
+
+  const cachedOpportunities = readCachedOpportunities();
+  if (cachedOpportunities.length) {
+    opportunities = cachedOpportunities;
+    renderHomeSections();
+    renderCatalog();
+    renderOpportunityDetail();
+  }
 
   try {
     const response = await fetch(opportunitiesEndpoint, {
@@ -140,6 +179,7 @@ async function loadOpportunities() {
     const data = await response.json();
     if (Array.isArray(data.opportunities)) {
       opportunities = data.opportunities;
+      cacheOpportunities(opportunities);
     }
   } catch (error) {
     console.warn("Could not load Airtable opportunities.", error);
