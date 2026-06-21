@@ -1630,8 +1630,7 @@ h3 {
   --sdg-color: var(--primary);
   min-width: 0;
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  gap: 14px;
+  gap: 16px;
   padding: 18px;
   color: var(--text);
   background: var(--surface-soft);
@@ -1652,18 +1651,11 @@ h3 {
   outline-offset: 4px;
 }
 
-.sdg-number {
-  width: 48px;
-  height: 48px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  background: var(--sdg-color);
+.sdg-icon {
+  width: 96px;
+  height: 96px;
+  object-fit: cover;
   border-radius: var(--radius);
-  font-size: 1.45rem;
-  font-weight: 900;
-  line-height: 1;
 }
 
 .sdg-card h3 {
