@@ -49,6 +49,9 @@ const filterOptionGroups = document.querySelectorAll("[data-filter-options]");
 const clearFilters = document.querySelector("#clearFilters");
 const choiceFields = document.querySelectorAll("[data-choice]");
 const resultCountNode = document.querySelector("[data-result-count]");
+const activeOpportunityCountNode = document.querySelector("[data-active-opportunity-count]");
+const archivedOpportunityCountNode = document.querySelector("[data-archived-opportunity-count]");
+const catalogViewButtons = document.querySelectorAll("[data-catalog-view]");
 const activeFilterList = document.querySelector("[data-active-filter-list]");
 const filterCountNodes = document.querySelectorAll("[data-filter-count]");
 const filterToggle = document.querySelector("[data-filter-toggle]");
@@ -69,6 +72,7 @@ const filters = {
 
 let searchQuery = "";
 let activeSort = "deadline";
+let catalogView = "active";
 
 function formatDate(value) {
   if (!value) return "";
@@ -88,6 +92,22 @@ function daysUntilDeadline(value) {
   deadlineDate.setHours(0, 0, 0, 0);
   today.setHours(0, 0, 0, 0);
   return Math.ceil((deadlineDate - today) / 86400000);
+}
+
+function isExpiredOpportunity(item) {
+  return daysUntilDeadline(item.deadline) < 0;
+}
+
+function activeOpportunities() {
+  return opportunities.filter((item) => !isExpiredOpportunity(item));
+}
+
+function archivedOpportunities() {
+  return opportunities.filter(isExpiredOpportunity);
+}
+
+function catalogSourceOpportunities() {
+  return catalogView === "archived" ? archivedOpportunities() : activeOpportunities();
 }
 
 function setMetaContent(selector, value) {
@@ -241,12 +261,13 @@ function upcomingDeadlineCount(items) {
 
 function renderHeroStats() {
   if (!heroStats) return;
+  const activeItems = activeOpportunities();
 
   const stats = [
-    ["Opportunities", opportunities.length],
-    ["Categories", new Set(opportunities.map((item) => item.category).filter(Boolean)).size],
-    ["Organizers", new Set(opportunities.map((item) => item.organizer).filter(Boolean)).size],
-    ["Upcoming deadlines", upcomingDeadlineCount(opportunities)],
+    ["Opportunities", activeItems.length],
+    ["Categories", new Set(activeItems.map((item) => item.category).filter(Boolean)).size],
+    ["Organizers", new Set(activeItems.map((item) => item.organizer).filter(Boolean)).size],
+    ["Upcoming deadlines", upcomingDeadlineCount(activeItems)],
   ];
 
   heroStats.innerHTML = stats
@@ -274,7 +295,7 @@ function filterLabel(group, value) {
 function availableFilterValues(group) {
   const values = new Set();
 
-  opportunities.forEach((item) => {
+  catalogSourceOpportunities().forEach((item) => {
     if (group === "regions" && item.region) values.add(item.region);
     if (group === "categories" && item.category) values.add(item.category);
     if (group === "tags") (item.tags || []).forEach((tag) => values.add(tag));
@@ -368,6 +389,15 @@ function updateFilterUi() {
   });
 
   if (clearFilters) clearFilters.hidden = count === 0;
+
+  catalogViewButtons.forEach((button) => {
+    const active = button.dataset.catalogView === catalogView;
+    button.classList.toggle("active", active);
+    button.setAttribute("aria-pressed", String(active));
+  });
+
+  if (activeOpportunityCountNode) activeOpportunityCountNode.textContent = activeOpportunities().length;
+  if (archivedOpportunityCountNode) archivedOpportunityCountNode.textContent = archivedOpportunities().length;
 }
 
 function renderActiveFilterChips() {
@@ -408,7 +438,7 @@ function matchesTags(selectedTags, itemTags) {
 function filteredOpportunities() {
   const query = searchQuery.trim().toLowerCase();
 
-  return opportunities.filter((item) => {
+  return catalogSourceOpportunities().filter((item) => {
     const searchable = [
       item.title,
       item.organizer,
@@ -436,15 +466,19 @@ function sortedOpportunities(items) {
     if (!a.deadline && !b.deadline) return 0;
     if (!a.deadline) return 1;
     if (!b.deadline) return -1;
+    if (catalogView === "archived") return new Date(b.deadline) - new Date(a.deadline);
     return new Date(a.deadline) - new Date(b.deadline);
   });
 }
 
 function opportunityCard(item, variant = "", options = {}) {
   const daysLeft = daysUntilDeadline(item.deadline);
+  const expired = isExpiredOpportunity(item);
   const closingSoon = daysLeft >= 0 && daysLeft < 7;
   const deadlineText = item.deadline
-    ? closingSoon
+    ? expired
+      ? `Expired - ${formatDate(item.deadline)}`
+      : closingSoon
       ? `Closing soon - ${formatDate(item.deadline)}`
       : `Deadline: ${formatDate(item.deadline)}`
     : "";
@@ -458,25 +492,30 @@ function opportunityCard(item, variant = "", options = {}) {
     .map((value) => `<span>${escapeHtml(value)}</span>`)
     .join("");
 
+  const tagName = expired ? "article" : "a";
+  const href = expired ? "" : ` href="${opportunityUrl(item)}"`;
+  const disabledLabel = expired ? ' aria-label="Archived opportunity. Applications are closed."' : "";
+
   return `
-    <a class="card quick-card opportunity-card ${variant}" href="${opportunityUrl(item)}">
+    <${tagName} class="card quick-card opportunity-card ${expired ? "archived-card" : ""} ${variant}"${href}${disabledLabel}>
       ${item.imageSrc ? `<img class="card-image" src="${escapeAttribute(safeUrl(item.imageSrc))}" alt="${escapeAttribute(item.title || "Opportunity image")}" loading="${options.eagerImage ? "eager" : "lazy"}" ${options.eagerImage ? 'fetchpriority="high"' : ""} />` : ""}
       ${item.category ? `<div class="card-top">
         <span class="type-badge">${escapeHtml(categoryLabels[item.category] || item.category)}</span>
+        ${expired ? '<span class="status-badge expired">Expired</span>' : ""}
       </div>` : ""}
       ${item.title ? `<h3>${escapeHtml(item.title)}</h3>` : ""}
       ${meta ? `<div class="card-meta">${meta}</div>` : ""}
       ${item.description ? `<p class="card-description">${escapeHtml(item.description)}</p>` : ""}
       <div class="tag-list" aria-label="Tags">${tags}</div>
-      ${deadlineText ? `<div class="deadline ${closingSoon ? "closing-soon" : ""}">
+      ${deadlineText ? `<div class="deadline ${expired ? "expired" : closingSoon ? "closing-soon" : ""}">
         <svg aria-hidden="true" viewBox="0 0 24 24">
           <path d="M8 2v4M16 2v4M3 10h18" />
           <rect x="3" y="4" width="18" height="18" rx="2" />
         </svg>
         ${escapeHtml(deadlineText)}
       </div>` : ""}
-      <span class="card-action">View details</span>
-    </a>
+      <span class="card-action">${expired ? "Archived" : "View details"}</span>
+    </${tagName}>
   `;
 }
 
@@ -488,13 +527,16 @@ function renderCatalog() {
   renderActiveFilterChips();
 
   const items = sortedOpportunities(filteredOpportunities());
-  if (resultCountNode) resultCountNode.textContent = resultLabel(items.length);
+  if (resultCountNode) {
+    resultCountNode.textContent = `${resultLabel(items.length)} ${catalogView === "archived" ? "in archive" : "active"}`;
+  }
 
   if (!items.length) {
+    const archived = catalogView === "archived";
     catalogGrid.innerHTML = `
       <div class="empty-state catalog-empty-state">
-        <h3>No opportunities match your filters yet.</h3>
-        <p>Try adjusting your search or check back soon - new opportunities are added regularly.</p>
+        <h3>${archived ? "No archived opportunities match your filters." : "No active opportunities match your filters yet."}</h3>
+        <p>${archived ? "Expired opportunities will appear here after their application deadlines pass." : "Try adjusting your search or check back soon - new opportunities are added regularly."}</p>
         <button class="button primary" type="button" data-empty-reset>Reset filters</button>
       </div>
     `;
@@ -508,7 +550,7 @@ function renderCatalog() {
 function renderHomeSections() {
   renderHeroStats();
   if (!featuredGrid) return;
-  const featured = sortedOpportunities(opportunities).slice(0, 3);
+  const featured = sortedOpportunities(activeOpportunities()).slice(0, 3);
   preloadImage(featured[0]?.imageSrc);
   featuredGrid.innerHTML = featured.map((item, index) => opportunityCard(item, "featured-card", { eagerImage: index === 0 })).join("");
 }
@@ -546,8 +588,9 @@ function renderOpportunityDetail() {
 
   const metadata = detailMetadata(item);
   const daysLeft = daysUntilDeadline(item.deadline);
+  const expired = isExpiredOpportunity(item);
   const closingSoon = daysLeft >= 0 && daysLeft < 7;
-  const related = opportunities
+  const related = activeOpportunities()
     .filter((candidate) => candidate.id !== item.id)
     .map((candidate) => {
       const sharedTags = (candidate.tags || []).filter((tag) => (item.tags || []).includes(tag)).length;
@@ -557,7 +600,7 @@ function renderOpportunityDetail() {
     .filter(({ score }) => score > 0)
     .sort((a, b) => b.score - a.score || (a.deadline ? new Date(a.deadline) : Infinity) - (b.deadline ? new Date(b.deadline) : Infinity))
     .map(({ candidate }) => candidate)
-    .concat(opportunities.filter((candidate) => candidate.id !== item.id))
+    .concat(activeOpportunities().filter((candidate) => candidate.id !== item.id))
     .filter((candidate, index, list) => list.findIndex((entry) => entry.id === candidate.id) === index)
     .slice(0, 3);
   const tags = (item.tags || [])
@@ -593,7 +636,7 @@ function renderOpportunityDetail() {
     : "";
   const timelineItems = [
     ["Applications open", metadata.applicationOpen, ""],
-    ["Application deadline", item.deadline, closingSoon ? "date-emphasis" : ""],
+    ["Application deadline", item.deadline, expired || closingSoon ? "date-emphasis" : ""],
     ["Program start", metadata.programStart, ""],
   ]
     .filter(([, value]) => value)
@@ -645,6 +688,12 @@ function renderOpportunityDetail() {
     </nav>
 
     <article class="opportunity-detail-page">
+      ${expired ? `
+      <div class="expired-notice" role="status">
+        <strong>This opportunity is archived.</strong>
+        <span>The application deadline has passed, so applications are no longer available through this listing.</span>
+      </div>
+      ` : ""}
       <section class="opportunity-detail-hero">
         ${item.imageSrc ? `
         <div class="opportunity-detail-media">
@@ -654,7 +703,7 @@ function renderOpportunityDetail() {
         <div class="opportunity-detail-copy">
           <h1 class="page-title">${escapeHtml(titleText)}</h1>
           <div class="detail-hero-actions">
-            ${safeUrl(metadata.applyUrl) ? `<a class="button primary" href="${escapeAttribute(safeUrl(metadata.applyUrl))}" ${safeUrl(metadata.applyUrl).startsWith("mailto:") ? "" : 'target="_blank" rel="noopener"'}>Apply Now</a>` : ""}
+            ${!expired && safeUrl(metadata.applyUrl) ? `<a class="button primary" href="${escapeAttribute(safeUrl(metadata.applyUrl))}" ${safeUrl(metadata.applyUrl).startsWith("mailto:") ? "" : 'target="_blank" rel="noopener"'}>Apply Now</a>` : ""}
             <button class="button secondary share-button" type="button" data-share-opportunity>Share</button>
           </div>
         </div>
@@ -679,9 +728,10 @@ function renderOpportunityDetail() {
 
         <aside class="detail-side-panel" aria-label="Application summary">
           <p class="eyebrow">Next step</p>
-          <h2>Ready to apply?</h2>
-          <p>Open the organizer page or contact the organizer directly. SkillBridge collects opportunities and helps you find the right match.</p>
-          ${safeUrl(metadata.applyUrl) ? `<a class="button primary" href="${escapeAttribute(safeUrl(metadata.applyUrl))}" ${safeUrl(metadata.applyUrl).startsWith("mailto:") ? "" : 'target="_blank" rel="noopener"'}>Apply Now</a>` : ""}
+          <h2>${expired ? "Applications closed" : "Ready to apply?"}</h2>
+          <p>${expired ? "This listing is kept for reference in the archive. Browse active opportunities to find programs that are still accepting applications." : "Open the organizer page or contact the organizer directly. SkillBridge collects opportunities and helps you find the right match."}</p>
+          ${!expired && safeUrl(metadata.applyUrl) ? `<a class="button primary" href="${escapeAttribute(safeUrl(metadata.applyUrl))}" ${safeUrl(metadata.applyUrl).startsWith("mailto:") ? "" : 'target="_blank" rel="noopener"'}>Apply Now</a>` : ""}
+          ${expired ? '<a class="button primary" href="/catalog">Browse active opportunities</a>' : ""}
           <dl class="side-facts">${sideFacts}</dl>
         </aside>
       </div>
@@ -741,6 +791,22 @@ if (initialSearch) {
 
 if (catalogLayout) {
   catalogLayout.addEventListener("click", (event) => {
+    const viewButton = event.target.closest("[data-catalog-view]");
+    if (viewButton) {
+      const nextView = viewButton.dataset.catalogView === "archived" ? "archived" : "active";
+      if (nextView !== catalogView) {
+        catalogView = nextView;
+        filters.regions.clear();
+        filters.categories.clear();
+        filters.tags.clear();
+        searchQuery = "";
+        if (catalogSearch) catalogSearch.value = "";
+        setFiltersOpen(false);
+        renderCatalog();
+      }
+      return;
+    }
+
     const button = event.target.closest("[data-filter-group]");
     if (!button) return;
     const group = button.dataset.filterGroup;

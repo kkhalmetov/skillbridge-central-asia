@@ -103,7 +103,17 @@
 
           <div class="catalog-results">
             <div class="results-heading">
-              <span class="results-count" data-result-count aria-live="polite"></span>
+              <div class="results-status">
+                <span class="results-count" data-result-count aria-live="polite"></span>
+                <div class="catalog-view-switch" aria-label="Opportunity status">
+                  <button class="catalog-view-button active" type="button" data-catalog-view="active" aria-pressed="true">
+                    Active <span data-active-opportunity-count></span>
+                  </button>
+                  <button class="catalog-view-button" type="button" data-catalog-view="archived" aria-pressed="false">
+                    Archive <span data-archived-opportunity-count></span>
+                  </button>
+                </div>
+              </div>
               <div class="choice-field catalog-sort" data-choice data-choice-action="sort">
                 <span class="choice-label">Sort by</span>
                 <input type="hidden" name="catalogSort" value="deadline" data-choice-input />
